@@ -18,11 +18,9 @@ app.post('/api/errors', async (req, res) => {
   }
 
   try {
-    const response = await handler(event);
-    res.status(response.statusCode).send(response.body);
+    await handler(event);
   } catch (e) {
-    console.error('Error: ', e);
-    res.status(500).send({ message: 'Error processing the request' });
+    console.error('Error projecessing error data: ', e);
   }
 });
 
@@ -37,10 +35,8 @@ app.post('/api/rejections', async (req, res) => {
 
   try {
     const response = await handler(event);
-    res.status(response.statusCode).send(response.body);
   } catch (e) {
-    console.error('Error: ', e);
-    res.status(500).send({ message: 'Error processing the request' });
+    console.error('Error processing rejection data: ', e);
   }
 });
 
