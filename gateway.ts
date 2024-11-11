@@ -19,7 +19,24 @@ app.post('/api/errors', async (req, res) => {
 
   try {
     const response = await handler(event);
-    console.log('Response: ', response);
+    res.status(response.statusCode).send(response.body);
+  } catch (e) {
+    console.error('Error: ', e);
+    res.status(500).send({ message: 'Error processing the request' });
+  }
+});
+
+app.post('/api/rejections', async (req, res) => {
+  const event = { 
+    Records: [
+      { 
+        body: JSON.stringify(req.body),
+      },
+    ]
+  }
+
+  try {
+    const response = await handler(event);
     res.status(response.statusCode).send(response.body);
   } catch (e) {
     console.error('Error: ', e);
