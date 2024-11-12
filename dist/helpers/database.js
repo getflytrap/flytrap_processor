@@ -9,6 +9,7 @@ const pg_1 = __importDefault(require("pg"));
 const uuid_1 = require("uuid");
 const stacktrace_processor_1 = require("./stacktrace_processor");
 dotenv_1.default.config(); // only for local dev
+
 const { Pool } = pg_1.default;
 const pool = new Pool({
     user: process.env.PGUSER,
@@ -18,6 +19,7 @@ const pool = new Pool({
     port: Number(process.env.PGPORT),
     ssl: { rejectUnauthorized: false }
 });
+
 const saveErrorData = async (data) => {
     try {
         const project = await pool.query('SELECT id FROM projects WHERE uuid = $1', [data.project_id]);
