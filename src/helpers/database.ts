@@ -7,11 +7,12 @@ dotenv.config(); // only for local dev
 const { Pool } = pkg;
 
 const pool = new Pool({
-  user: process.env.PGUSER,  
+  user: process.env.PGUSER,
   host: process.env.PGUSERHOST,
-  database: process.env.PGDATABASE, 
-  password: process.env.PGPASSWORD, 
-  port: Number(process.env.PGPORT), 
+  database: process.env.PGDATABASE,
+  password: process.env.PGPASSWORD,
+  port: Number(process.env.PGPORT),
+  ssl: { rejectUnauthorized: false }
 });
 
 interface ErrorData {
