@@ -12,7 +12,7 @@ const pool = new Pool({
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
   port: Number(process.env.PGPORT),
-  ssl: { rejectUnauthorized: false }
+  // ssl: { rejectUnauthorized: false } // only for production
 });
 
 interface ErrorData {
