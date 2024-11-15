@@ -42,13 +42,15 @@ interface RejectionData {
 
 export const saveErrorData = async (data: ErrorData) => {
   try {
-    const project = await pool.query('SELECT id FROM projects WHERE uuid = $1', [data.project_id])
+    const project = await pool.query('SELECT id, platform FROM projects WHERE uuid = $1', [data.project_id])
     const projectId = project.rows[0].id ? project.rows[0].id : null;
     if (!projectId) return { success: false, error: "Project not found."}
 
+    const projectPlatform = project.rows[0].platform
+
     const error_uuid = uuidv4();
     
-    const { fileName, lineNumber, colNumber} = extractLineAndColNumbers(data.error.stack);
+    const { fileName, lineNumber, colNumber} = extractLineAndColNumbers(data.error.stack, projectPlatform);
     const codeContextsJson = JSON.stringify(data.codeContexts || null);
 
     const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
