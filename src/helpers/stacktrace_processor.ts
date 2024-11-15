@@ -6,9 +6,6 @@ export const extractLineAndColNumbers = (stack: string | undefined, platform: st
     if (platform === 'Flask') {
       regex = /File "(.+?)", line (\d+),/;
       const match = stack.match(regex);
-
-      console.log('Python Match:')
-      console.log(match);
       
       if (match) {
         const fileName = match[1];
@@ -23,10 +20,19 @@ export const extractLineAndColNumbers = (stack: string | undefined, platform: st
     } else if (platform === 'Express.js') {
       regex = /(\S+?):(\d+):(\d+)/;
       const match = stack.match(regex);
-  
-      console.log('Express Match:')
-      console.log(match);
     
+      if (match) {
+        const [, fileName, line, col] = match;
+        return {
+          fileName,
+          lineNumber: parseInt(line, 10),
+          colNumber: parseInt(col, 10),
+        };
+      }
+    } else {
+      regex = /(?:at\s+)?(?:.*?\s+)?(?:\()?(.+?):(\d+):(\d+)/;
+      const match = stack.match(regex);
+      
       if (match) {
         const [, fileName, line, col] = match;
         return {
