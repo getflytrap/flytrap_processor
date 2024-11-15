@@ -23,8 +23,9 @@ interface ErrorData {
     stack?: string;
   };
   timestamp: string;
-  line_number?: number;
-  col_number?: number;
+  file: string;
+  line_number: number;
+  col_number: number;
   handled: boolean;
 }
 
@@ -42,16 +43,12 @@ export const saveErrorData = async (data: ErrorData) => {
     if (!projectId) return { success: false, error: "Project not found."}
 
     const error_uuid = uuidv4();
-
-    console.log('Error stack trace:')
-    console.log(data.error.stack);
-    console.log('');
     
     const { fileName, lineNumber, colNumber} = extractLineAndColNumbers(data.error.stack);
 
-    const query = `INSERT INTO error_logs (uuid, name, message, created_at,
+    const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
     line_number, col_number, project_id, stack_trace, handled) VALUES 
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`;
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -60,6 +57,7 @@ export const saveErrorData = async (data: ErrorData) => {
         data.error.name || 'UnknownError',
         data.error.message || 'No message provided',
         data.timestamp,
+        fileName,
         lineNumber,
         colNumber,
         projectId,
