@@ -15,7 +15,7 @@ export const handler = async (event: LambdaEvent) => {
 
     try {
       if (data.error) {
-        const { success, result } = await saveErrorData(data);
+        const { success } = await saveErrorData(data);
         
         if (success) {
           sendWebhookNotification(data.project_id); // fire-and-forget
@@ -23,7 +23,7 @@ export const handler = async (event: LambdaEvent) => {
           console.error('Error saving error data to PostgreSQL'); 
         }
       } else {
-        const { success, result } = await saveRejectionData(data);
+        const { success } = await saveRejectionData(data);
 
         if (success) {
           sendWebhookNotification(data.project_id); // fire-and-forget

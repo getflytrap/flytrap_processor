@@ -15,18 +15,22 @@ const pool = new Pool({
   // ssl: { rejectUnauthorized: false } // only for production
 });
 
+interface CodeContext {
+  file: string;
+  line: number;
+  column: number;
+  context: string;
+}
 interface ErrorData {
-  project_id: string;
   error: {
     name?: string;
     message?: string;
     stack?: string;
   };
-  timestamp: string;
-  file: string;
-  line_number: number;
-  col_number: number;
+  codeContexts?: CodeContext[];
   handled: boolean;
+  timestamp: string;
+  project_id: string;
 }
 
 interface RejectionData {
@@ -45,10 +49,11 @@ export const saveErrorData = async (data: ErrorData) => {
     const error_uuid = uuidv4();
     
     const { fileName, lineNumber, colNumber} = extractLineAndColNumbers(data.error.stack);
+    const codeContextsJson = JSON.stringify(data.codeContexts || null);
 
     const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
-    line_number, col_number, project_id, stack_trace, handled) VALUES 
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`;
+    line_number, col_number, project_id, stack_trace, handled, contexts) VALUES 
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -63,6 +68,7 @@ export const saveErrorData = async (data: ErrorData) => {
         projectId,
         data.error.stack || 'No stack trace available',
         data.handled,
+        codeContextsJson,
       ]
     );
   
