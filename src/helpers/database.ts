@@ -89,12 +89,15 @@ export const saveRejectionData = async (data: RejectionData) => {
 
     if (!projectId) return { success: false, error: "Project not found."}
 
-    const query = `INSERT INTO rejection_logs (value, created_at, 
-    project_id, handled) VALUES ($1, $2, $3, $4) RETURNING id`;
+    const rejection_uuid = uuidv4();
+
+    const query = `INSERT INTO rejection_logs (uuid, value, created_at,
+    project_id, handled) VALUES ($1, $2, $3, $4, $5) RETURNING id`;
 
     const result = await pool.query(
       query,
       [
+        rejection_uuid,
         data.value,
         data.timestamp,
         projectId,
