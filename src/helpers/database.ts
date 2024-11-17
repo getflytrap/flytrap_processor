@@ -31,6 +31,8 @@ interface ErrorData {
   handled: boolean;
   timestamp: string;
   project_id: string;
+  method?: string;
+  path?: string;
 }
 
 interface RejectionData {
@@ -38,6 +40,8 @@ interface RejectionData {
   timestamp: string;
   project_id: string;
   handled: boolean;
+  method?: string;
+  path?: string;
 }
 
 export const saveErrorData = async (data: ErrorData) => {
@@ -54,8 +58,8 @@ export const saveErrorData = async (data: ErrorData) => {
     const codeContextsJson = JSON.stringify(data.codeContexts || null);
 
     const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
-    line_number, col_number, project_id, stack_trace, handled, contexts) VALUES 
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`;
+    line_number, col_number, project_id, stack_trace, handled, contexts, method, path) VALUES 
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -71,6 +75,8 @@ export const saveErrorData = async (data: ErrorData) => {
         data.error.stack || 'No stack trace available',
         data.handled,
         codeContextsJson,
+        data.method,
+        data.path
       ]
     );
   
@@ -92,7 +98,7 @@ export const saveRejectionData = async (data: RejectionData) => {
     const rejection_uuid = uuidv4();
 
     const query = `INSERT INTO rejection_logs (uuid, value, created_at,
-    project_id, handled) VALUES ($1, $2, $3, $4, $5) RETURNING id`;
+    project_id, handled, method, path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -102,6 +108,8 @@ export const saveRejectionData = async (data: RejectionData) => {
         data.timestamp,
         projectId,
         data.handled,
+        data.method,
+        data.path
       ]
     );
 
