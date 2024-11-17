@@ -98,7 +98,7 @@ export const saveRejectionData = async (data: RejectionData) => {
     const rejection_uuid = uuidv4();
 
     const query = `INSERT INTO rejection_logs (uuid, value, created_at,
-    project_id, handled, method, path) VALUES ($1, $2, $3, $4, $5) RETURNING id`;
+    project_id, handled, method, path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
 
     const result = await pool.query(
       query,
