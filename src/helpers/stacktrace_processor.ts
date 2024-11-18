@@ -4,8 +4,9 @@ export const extractLineAndColNumbers = (stack: string | undefined, platform: st
     let regex;
     
     if (platform === 'Flask') {
-      regex = /File "(.+?)", line (\d+),/;
-      const match = stack.match(regex);
+      regex = /^\s*File\s+"([^"]+)",\s+line\s+(\d+)(?:,\s+in\s+(.+))?/;
+      const stackLines = stack.split("\n").reverse(); 
+      const match = stackLines[3].match(regex);
       
       if (match) {
         const fileName = match[1];

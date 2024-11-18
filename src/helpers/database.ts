@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'; // only for local dev
+import crypto from 'crypto';
 import pkg from 'pg';
 import { v4 as uuidv4 } from 'uuid';
 import { extractLineAndColNumbers } from './stacktrace_processor';
@@ -33,6 +34,10 @@ interface ErrorData {
   project_id: string;
   method?: string;
   path?: string;
+  ip?: string;
+  os?: string;
+  browser?: string;
+  runtime?: string;
 }
 
 interface RejectionData {
@@ -42,6 +47,10 @@ interface RejectionData {
   handled: boolean;
   method?: string;
   path?: string;
+  ip?: string;
+  os?: string;
+  browser?: string;
+  runtime?: string;
 }
 
 export const saveErrorData = async (data: ErrorData) => {
@@ -51,15 +60,15 @@ export const saveErrorData = async (data: ErrorData) => {
     if (!projectId) return { success: false, error: "Project not found."}
 
     const projectPlatform = project.rows[0].platform
-
     const error_uuid = uuidv4();
-    
     const { fileName, lineNumber, colNumber} = extractLineAndColNumbers(data.error.stack, projectPlatform);
     const codeContextsJson = JSON.stringify(data.codeContexts || null);
+    const hashInput = `${fileName}:${lineNumber}:${colNumber}:${data.error.name}`
+    const errorHash = crypto.createHash('sha256').update(hashInput).digest('hex');
 
     const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
-    line_number, col_number, project_id, stack_trace, handled, contexts, method, path) VALUES 
-    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING id`;
+    line_number, col_number, project_id, stack_trace, handled, contexts, method, path, ip, os, browser, runtime, error_hash) VALUES 
+    ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -76,7 +85,12 @@ export const saveErrorData = async (data: ErrorData) => {
         data.handled,
         codeContextsJson,
         data.method,
-        data.path
+        data.path,
+        data.ip,
+        data.os,
+        data.browser,
+        data.runtime,
+        errorHash,
       ]
     );
   
@@ -98,7 +112,7 @@ export const saveRejectionData = async (data: RejectionData) => {
     const rejection_uuid = uuidv4();
 
     const query = `INSERT INTO rejection_logs (uuid, value, created_at,
-    project_id, handled, method, path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`;
+    project_id, handled, method, path, ip, os, browser, runtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`;
 
     const result = await pool.query(
       query,
@@ -109,7 +123,11 @@ export const saveRejectionData = async (data: RejectionData) => {
         projectId,
         data.handled,
         data.method,
-        data.path
+        data.path,
+        data.ip,
+        data.os,
+        data.browser,
+        data.runtime,
       ]
     );
 
