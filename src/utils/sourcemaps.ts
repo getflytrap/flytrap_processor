@@ -4,11 +4,11 @@ import { extractCodeContext } from "./context";
 import { streamToString } from "./stream";
 import { CodeContext } from "./types";
 
-// * Development
-// import { readFileSync } from 'fs';
-// import { join } from 'path';
-// import dotenv from 'dotenv';
-// dotenv.config();
+const environment = process.env.NODE_ENV || 'development';
+
+if (environment === 'development') {
+  import('dotenv').then((dotenv) => dotenv.config());
+}
 
 const s3 = new S3Client({
   region: process.env.REGION,
@@ -22,14 +22,17 @@ const s3 = new S3Client({
  * @returns A promise that resolves to the source map content or null if not found.
  */
 export const fetchSourceMap = async (projectUuid: string, fileName: string) => {
-  const bucketName = process.env.S3_BUCKET_NAME as string;
-  const key = `${projectUuid}/${fileName}`;
-
   try {
-    // * Development
-    // const filePath = join(__dirname, '..', 'sourcemaps', projectUuid, fileName);
-    // const sourceMapContent = readFileSync(filePath, 'utf-8');
-    // return sourceMapContent;
+    if (environment === "development") {
+      const { readFileSync } = await import("fs");
+      const { join } = await import("path");
+      const filePath = join(__dirname, '..', 'sourcemaps', projectUuid, fileName);
+      const sourceMapContent = readFileSync(filePath, 'utf-8');
+      return sourceMapContent;
+    }
+
+    const bucketName = process.env.S3_BUCKET_NAME as string;
+    const key = `${projectUuid}/${fileName}`;
 
     const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
     const response = await s3.send(command);

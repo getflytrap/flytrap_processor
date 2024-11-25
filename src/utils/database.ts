@@ -4,19 +4,20 @@ import { v4 as uuidv4 } from "uuid";
 import { processStackTrace } from "./stacktrace";
 import { ErrorData, RejectionData } from "./types";
 
-// * Development
-// import dotenv from 'dotenv';
-// dotenv.config();
+const environment = process.env.NODE_ENV || 'development';
+
+if (environment === 'development') {
+  import('dotenv').then((dotenv) => dotenv.config());
+}
 
 const { Pool } = pkg;
-
 const pool = new Pool({
   user: process.env.PGUSER,
   host: process.env.PGUSERHOST,
   database: process.env.PGDATABASE,
   password: process.env.PGPASSWORD,
   port: Number(process.env.PGPORT),
-  ssl: { rejectUnauthorized: false }, // * Uncomment for production
+  ssl: environment === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 /**
