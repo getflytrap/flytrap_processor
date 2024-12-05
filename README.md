@@ -5,6 +5,8 @@ The Flytrap Processor is the serverless backend component responsible for proces
 
 This repository contains the Lambda function code and allows you to mock its behavior locally using a simple Express server. If you want to use Flytrap in a production environment, refer to the [Flytrap Installation Guide](https://github.com/getflytrap/flytrap_terraform) for complete setup instructions.
 
+To learn more about Flytrap, check out our [case study](https://getflytrap.github.io/).
+
 ## 🛠️ What Does It Do?
 The Flytrap Processor:
 
