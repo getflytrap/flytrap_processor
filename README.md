@@ -126,3 +126,9 @@ To test the source maps feature:
 - **Mock Environment:** Running locally is ideal for debugging and developing new features before deploying to AWS.
 
 For questions or issues, feel free to open an issue in this repository or contact the Flytrap team. 🚀
+
+---
+
+<div align="center">
+  🪰🪤🪲🌱🚦🛠️🪴
+</div>
