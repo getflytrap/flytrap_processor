@@ -3,7 +3,7 @@
 # Flytrap Processor
 The Flytrap Processor is the serverless backend component responsible for processing error and rejection payloads sent from the Flytrap SDK. It runs as an AWS Lambda function, ensuring efficient and scalable handling of error data, including stack trace parsing and source map integration.
 
-This repository contains the Lambda function code and allows you to mock its behavior locally using a simple Express server. If you want to use Flytrap in a production environment, refer to the [Flytrap Installation Guide](https://getflytrap.github.io/) for complete setup instructions.
+This repository contains the Lambda function code and allows you to mock its behavior locally using a simple Express server. If you want to use Flytrap in a production environment, refer to the [Flytrap Installation Guide](https://github.com/getflytrap/flytrap_terraform) for complete setup instructions.
 
 ## 🛠️ What Does It Do?
 The Flytrap Processor:
