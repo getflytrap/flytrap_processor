@@ -34,7 +34,7 @@ To test the Flytrap Processor locally, you can mock the API Gateway using an Exp
     npm install
     ```
 
-3. Set up the mock Express server: Create a new file (e.g., mockServer.js) with the following code:
+3. Set up the mock Express server: Create a new file `mockGateway.ts` with the following code:
 
     ```javascript
     import express from 'express';

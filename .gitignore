@@ -1,8 +1,8 @@
 node_modules
 .env
-gateway.ts
-dist
-deploy
+mockGateway.ts
+dist/
+deploy/
 sourcemaps
 .DS_Store
 update_lambda.sh
