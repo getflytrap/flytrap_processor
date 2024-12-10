@@ -52,6 +52,12 @@ export const saveErrorData = async (data: ErrorData) => {
       .update(hashInput)
       .digest("hex");
 
+    // Generate a unique hash for the ip address.
+    const ipHash = crypto
+      .createHash("sha256")
+      .update(data.ip || "")
+      .digest("hex");
+
     // Insert error data into the database.
     const query = `INSERT INTO error_logs (uuid, name, message, created_at, filename,
     line_number, col_number, project_id, stack_trace, handled, contexts, method, path, ip, os, browser, runtime, error_hash) VALUES 
@@ -71,7 +77,7 @@ export const saveErrorData = async (data: ErrorData) => {
       codeContextsJson,
       data.method,
       data.path,
-      data.ip,
+      ipHash,
       data.os,
       data.browser,
       data.runtime,
@@ -104,6 +110,12 @@ export const saveRejectionData = async (data: RejectionData) => {
 
     const rejection_uuid = uuidv4();
 
+    // Generate a unique hash for the ip address.
+    const ipHash = crypto
+    .createHash("sha256")
+    .update(data.ip || "")
+    .digest("hex");
+
     // Insert rejection data into the database.
     const query = `INSERT INTO rejection_logs (uuid, value, created_at,
     project_id, handled, method, path, ip, os, browser, runtime) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`;
@@ -116,7 +128,7 @@ export const saveRejectionData = async (data: RejectionData) => {
       data.handled,
       data.method,
       data.path,
-      data.ip,
+      ipHash,
       data.os,
       data.browser,
       data.runtime,
