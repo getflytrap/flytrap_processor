@@ -21,12 +21,21 @@ const pool = new Pool({
 });
 
 /**
+ * Represents the result of a database operation.
+ */
+interface DbResult {
+  success: boolean;
+  result?: pkg.QueryResult;
+  error?: unknown;
+}
+
+/**
  * Saves error data to the database, processes stack trace details, and generates a unique hash for the error.
  *
  * @param data - The error data containing details like stack trace, method, and context.
- * @returns A promise that resolves to a success flag with query result or error.
+ * @returns A promise that resolves to a `DbResult` indicating success or failure.
  */
-export const saveErrorData = async (data: ErrorData) => {
+export const saveErrorData = async (data: ErrorData): Promise<DbResult> => {
   try {
     // Retrieve project ID and platform.
     const project = await pool.query(
@@ -89,9 +98,9 @@ export const saveErrorData = async (data: ErrorData) => {
  * Saves rejection data to the database.
  *
  * @param data - The rejection data containing details like value and method.
- * @returns A promise that resolves to a success flag with query result or error.
+ * @returns A promise that resolves to a `DbResult` indicating success or failure.
  */
-export const saveRejectionData = async (data: RejectionData) => {
+export const saveRejectionData = async (data: RejectionData): Promise<DbResult> => {
   try {
     // Retrieve project ID.
     const project = await pool.query(

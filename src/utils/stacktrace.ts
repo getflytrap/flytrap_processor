@@ -17,7 +17,11 @@ import { ErrorData, CodeContext } from "./types";
 export const extractStackFrameDetails = (
   stack: string | undefined,
   platform: string,
-) => {
+): {
+  fileName: string | null;
+  lineNumber: number | null;
+  colNumber: number | null;
+} => {
   if (stack) {
     let regex;
 

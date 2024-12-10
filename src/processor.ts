@@ -15,7 +15,7 @@ interface LambdaEvent {
  *
  * @param event - The event object containing an array of records.
  */
-export const handler = async (event: LambdaEvent) => {
+export const handler = async (event: LambdaEvent): Promise<void> => {
   for (const record of event.Records) {
     const { data } = JSON.parse(record.body);
 

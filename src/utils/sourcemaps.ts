@@ -21,7 +21,7 @@ const s3 = new S3Client({
  * @param fileName - The name of the source map file.
  * @returns A promise that resolves to the source map content or null if not found.
  */
-export const fetchSourceMap = async (projectUuid: string, fileName: string) => {
+export const fetchSourceMap = async (projectUuid: string, fileName: string): Promise<string | null> => {
   try {
     if (environment === "development") {
       const { readFileSync } = await import("fs");
@@ -105,7 +105,7 @@ export const mapCodeContexts = async (
 export const mapStackTrace = async (
   stackTrace: string,
   sourceMapContent: string,
-) => {
+): Promise<string> => {
   const consumer = await new SourceMapConsumer(sourceMapContent);
   const mappedStack = [];
 
@@ -148,7 +148,11 @@ export const extractSourceStackFrameDetails = async (
   sourceMapContent: string,
   line: number,
   column: number,
-) => {
+): Promise<{
+  fileName: string | null;
+  lineNumber: number | null;
+  colNumber: number | null;
+}> => {
   const consumer = await new SourceMapConsumer(sourceMapContent);
 
   try {
