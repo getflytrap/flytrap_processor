@@ -12,7 +12,7 @@ if (environment === 'development') {
 * @param projectId - The ID of the project for which the notification is being sent.
 * @returns A promise that resolves if the request is successful, logs errors otherwise.
 */
-export const sendWebhookNotification = async (projectId: string) => {
+export const sendWebhookNotification = async (projectId: string): Promise<void> => {
   const url = process.env.WEBHOOK_ENDPOINT;
 
   if (!url) {
